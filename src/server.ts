@@ -11,6 +11,7 @@ import mongoose, { Connection, ConnectOptions } from 'mongoose';
 import express, { Request, Response, NextFunction } from 'express';
 import logger from 'jet-logger';
 import { exit } from 'node:process';
+import formData from 'express-form-data';
 
 import 'express-async-errors';
 
@@ -33,6 +34,7 @@ const app = express();
 
 // Basic middleware
 app.use(express.json());
+app.use(formData.parse());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser(EnvVars.CookieProps.Secret));
 

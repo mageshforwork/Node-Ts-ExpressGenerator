@@ -5,8 +5,11 @@ import { ISessionUser } from '@src/models/User';
 
 // **** Express **** //
 
-export interface IReq<T = void> extends e.Request {
+export interface IReq<T = unknown> extends e.Request {
   body: T;
+  files?: T;
+  admin?: T;
+  adminId?: T;
 }
 
 export interface IRes extends e.Response {

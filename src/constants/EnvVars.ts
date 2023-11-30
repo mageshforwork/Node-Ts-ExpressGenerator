@@ -8,7 +8,10 @@
 export default {
   NodeEnv: (process.env.NODE_ENV ?? ''),
   Port: (process.env.PORT ?? 0),
+  ApiUrl: (process.env.API_URL ?? ''),
   MongodbUri: (process.env.MONGODB_URI ?? ''),
+  JwtSecret: (process.env.JWT_SECRET ?? ''),
+  JwtExpiry: (process.env.JWT_EXPIRY ?? ''),
   CookieProps: {
     Key: 'ExpressGeneratorTs',
     Secret: (process.env.COOKIE_SECRET ?? ''),

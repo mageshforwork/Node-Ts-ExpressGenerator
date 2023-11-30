@@ -1,14 +1,15 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 export interface Database {
-  adminId: string;
+  adminId: mongoose.Schema.Types.ObjectId;
   dbName: string;
   deleted_at: boolean;
 };
 
 const DatabaseSchema = new Schema<Database>({
   adminId: { 
-    type: String, 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Admin', 
     required: true 
   },
   dbName: { 

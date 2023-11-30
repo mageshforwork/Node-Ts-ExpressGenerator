@@ -22,8 +22,8 @@ export default {
     Logout: '/logout',
     // Delete: '/delete/:id',
   },
-  Super_Admin: {
-    Base: '/super-admin',
+  Auth: {
+    Base: '/admin',
     Get: '/all',
     Login: '/login',
     GetOne: '/view/:id',
@@ -31,12 +31,5 @@ export default {
     Update: '/update/:id',
     Logout: '/logout',
     Delete: '/delete/:id',
-  },
-  Admins: {
-    Base: '/admins',
-    Get: '/all',
-    Add: '/add',
-    Update: '/update',
-    Delete: '/delete/:id'
-  },
+  }
 } as const;
