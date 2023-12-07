@@ -25,8 +25,9 @@ UserRouter.delete(Paths.Users.Delete, validate(['id', 'number', 'params']), User
 
 SuperRouter.get(Paths.Auth.Get, SuperAuthRoutes.getAll); // Get all admins
 SuperRouter.get(Paths.Auth.GetOne, SuperAuthRoutes.getOne); // Get one admin
-SuperRouter.post(Paths.Auth.Login, SuperAuthRoutes.logIn); // Get one admin
+SuperRouter.post(Paths.Auth.Login, SuperAuthRoutes.logIn); // One admin login
 SuperRouter.post(Paths.Auth.Register, Tokener.authTokener, SuperAuthRoutes.add); // Register one admin
+SuperRouter.post(Paths.Auth.Login, Tokener.authTokener, SuperAuthRoutes.logOut); // One admin logout
 SuperRouter.put(Paths.Auth.Update, SuperAuthRoutes.update); // Update one admin
 SuperRouter.delete(Paths.Auth.Delete, SuperAuthRoutes.delete); // Delete one admin
 

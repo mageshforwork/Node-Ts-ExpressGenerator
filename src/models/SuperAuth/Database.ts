@@ -1,12 +1,12 @@
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema, model, Document } from 'mongoose';
 
-export interface Database {
+export interface DatabaseModel extends Document {
   adminId: mongoose.Schema.Types.ObjectId;
-  dbName: string;
+  dbName: object;
   deleted_at: boolean;
 };
 
-const DatabaseSchema = new Schema<Database>({
+const DatabaseSchema = new Schema<DatabaseModel>({
   adminId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Admin', 
@@ -15,7 +15,10 @@ const DatabaseSchema = new Schema<Database>({
   dbName: { 
     type: String, 
     required: true, 
-    unique: true 
+    unique: {
+      value: true,
+      message: 'Database name already exists.'
+    },
   },
   deleted_at: {
     type: Boolean,
@@ -23,4 +26,6 @@ const DatabaseSchema = new Schema<Database>({
   }
 },{ timestamps: true });
 
-export default model<Database>('Database', DatabaseSchema);
+const Database = model<DatabaseModel>('Database', DatabaseSchema);
+
+export default Database;

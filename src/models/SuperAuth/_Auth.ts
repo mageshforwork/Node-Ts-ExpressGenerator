@@ -9,7 +9,7 @@ export interface IAuth {
 
 interface AuthModel extends Document {
   name: string;
-  email: string;
+  email: unknown;
   pwdHash: string;
   role: string;
   deleted_at: boolean;
@@ -23,7 +23,10 @@ const AuthSchema = new Schema<AuthModel>({
   email: { 
     type: String, 
     required: true, 
-    unique: true
+    unique: {
+      value: true,
+      message: 'Email already exists.'
+    },
   },
   pwdHash: { 
     type: String, 

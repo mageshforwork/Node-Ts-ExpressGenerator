@@ -8,7 +8,28 @@ import EnvVars from '@src/constants/EnvVars';
 import { IReq, IRes } from '../types/express/misc';
 import { compareSync, hashSync } from "bcrypt";
 import { sign } from 'jsonwebtoken';
+import NodeValidator from 'node-input-validator';
+import mongoose, { startSession } from 'mongoose';
 
+// **** Extends **** //
+NodeValidator.extend('unique', async (details: any) => {
+  let condition: any = {};
+  const model = details.args[0];
+  const field = details.args[1];
+  const ignoreId = details.args[2] ?? null;
+  const exist = await mongoose.model(model).exists({_id: ignoreId}).then(() => {
+    return true;
+  }).catch(() => { 
+    return false;
+  });
+  condition[field] = details.value;
+  if (exist) {
+    condition['_id'] = { $ne: new mongoose.Types.ObjectId(ignoreId) };
+  }
+  let emailExist = await mongoose.model(model).findOne(condition).select(field);
+  if (emailExist) return false;
+  return true;
+});
 
 // **** Variables **** //
 
@@ -80,22 +101,34 @@ async function logIn(request: IReq, response: IRes) {
  * Register one admin.
  */
 async function add(request: IReq, response: IRes) {
-  console.log('request.admin : ',request.admin);
-  console.log('request.adminId : ',request.adminId);
+  const session = await startSession();
   try {
     const body: IAuth = request.body as IAuth;
     const { name, email, password } = body;
+    const validation = new NodeValidator.Validator({ name, email, password }, {
+      name : 'required',
+      email : 'required|email|unique:Admin,email,NULL',
+      password : 'required'
+    });
+    if (await validation.fails()) {
+      return Service.ResponseSuccess(response, validation.errors, HSC.UNPROCESSABLE_ENTITY);
+    }
+    session.startTransaction();
     const hash = hashSync(password!, 10);
     const data: IAuth = { name, email,
       pwdHash: hash
     };
-    const auth = await Auth.create(data);
-    const database = await Database.create({
+    const [auth] = await Auth.create([data],{session});
+    const [database] = await Database.create([{
       adminId: auth._id,
-      dbName: auth.email!.split('@')[0]
-    });
+      dbName: (typeof auth.email == 'string') ? auth.email!.split('@')[0] + '-' + 'admin' : null
+    }],{session});
+    await session.commitTransaction();
+    session.endSession();
     return Service.ResponseSuccess(response, [], HSC.CREATED);
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     return Service.ResponseError(response, err, HSC.BAD_REQUEST);
   }
 }
