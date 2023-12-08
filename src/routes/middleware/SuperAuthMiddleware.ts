@@ -5,10 +5,10 @@ import Service from '@src/services/Service';
 import { NextFunction } from 'express';
 import { IReq, IRes } from '../types/express/misc';
 import mongoose from 'mongoose';
+import { devNull } from 'node:os';
 
-interface Decode {
-    admin: object;
-};
+
+// *** Function *** //
 
 async function authTokener(request: IReq, response: IRes, next: NextFunction) {
     try {
@@ -23,20 +23,11 @@ async function authTokener(request: IReq, response: IRes, next: NextFunction) {
         if (!decoded.admin) {
             return Service.ResponseError(response, 'Invalid token for admin', HSC.UNAUTHORIZED);
         }
-        console.log('decoded : ',decoded);
-        
-        const exist = await mongoose.model('Admin').exists({_id: decoded.sub}).then(() => {
-            console.log('yes');
-            
-            return true;
-        }).catch(() => { 
-            console.log('no');
-            return false;
+        const exist = await mongoose.model('Admin').exists({_id: decoded.sub}).catch((err) => {
+            return Service.ResponseError(response, 'Maybe admin removed or : ' + err, HSC.UNAUTHORIZED);
         });
-        console.log('exist : ',exist);
-        
         if (!exist) {
-            return Service.ResponseError(response, 'Invalid token for admin', HSC.UNAUTHORIZED);
+            return Service.ResponseError(response, 'Admin removed.', HSC.UNAUTHORIZED);
         }
         request.admin = decoded.admin
         request.adminId = decoded.sub
