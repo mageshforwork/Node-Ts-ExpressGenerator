@@ -6,6 +6,7 @@ import User from '@src/models/User';
 import UserRoutes from './UserRoutes';
 import SuperAuthRoutes from './handler/SuperAuthHandler';
 import Tokener from './middleware/SuperAuthMiddleware';
+import { upload } from "./middleware/UploadsMiddleware";
 
 // **** Variables **** //
 
@@ -18,14 +19,14 @@ const SuperRouter = Router();
 
 // ** Add APIs ** //
 
-UserRouter.get(Paths.Users.Get, UserRoutes.getAll); // Get all users
-UserRouter.post(Paths.Users.Add, validate(['user', User.isUser]), UserRoutes.add); // Add one user
-UserRouter.put(Paths.Users.Update, validate(['user', User.isUser]), UserRoutes.update); // Update one user
-UserRouter.delete(Paths.Users.Delete, validate(['id', 'number', 'params']), UserRoutes.delete); // Delete one user
+// UserRouter.get(Paths.Users.Get, UserRoutes.getAll); // Get all users
+// UserRouter.post(Paths.Users.Add, validate(['user', User.isUser]), UserRoutes.add); // Add one user
+// UserRouter.put(Paths.Users.Update, validate(['user', User.isUser]), UserRoutes.update); // Update one user
+// UserRouter.delete(Paths.Users.Delete, validate(['id', 'number', 'params']), UserRoutes.delete); // Delete one user
 
 SuperRouter.get(Paths.Auth.Get, SuperAuthRoutes.getAll); // Get all admins
 SuperRouter.get(Paths.Auth.GetOne, SuperAuthRoutes.getOne); // Get one admin
-SuperRouter.post(Paths.Auth.Login, SuperAuthRoutes.logIn); // One admin login
+SuperRouter.post(Paths.Auth.Login, upload, SuperAuthRoutes.logIn); // One admin login
 SuperRouter.post(Paths.Auth.Register, Tokener.authTokener, SuperAuthRoutes.add); // Register one admin
 SuperRouter.post(Paths.Auth.Login, Tokener.authTokener, SuperAuthRoutes.logOut); // One admin logout
 SuperRouter.put(Paths.Auth.Update, SuperAuthRoutes.update); // Update one admin
