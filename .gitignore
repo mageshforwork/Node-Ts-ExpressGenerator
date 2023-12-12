@@ -134,3 +134,4 @@ dist
 dist/
 **/**/*.log
 package-lock.json
+uploads

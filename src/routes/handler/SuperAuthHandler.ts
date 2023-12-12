@@ -70,8 +70,6 @@ async function getOne(request: IReq, response: IRes) {
  * Login one admin.
  */
 async function logIn(request: IReq, response: IRes) {
-  console.log('request : ',request);
-  
   try {
     const body: IAuth = request.body as IAuth;
     const { email, password } = body;
