@@ -12,6 +12,7 @@ interface AuthModel extends Document {
   email: unknown;
   pwdHash: string;
   role: string;
+  profile: string;
   deleted_at: boolean;
 };
 
@@ -36,6 +37,7 @@ const AuthSchema = new Schema<AuthModel>({
     type: String, 
     default: 'admin'
   },
+  profile: { type: String },
   deleted_at: {
     type: Boolean,
     default: false

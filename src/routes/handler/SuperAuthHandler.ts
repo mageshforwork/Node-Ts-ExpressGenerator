@@ -10,6 +10,7 @@ import { compareSync, hashSync } from "bcrypt";
 import { sign } from 'jsonwebtoken';
 import NodeValidator from 'node-input-validator';
 import mongoose, { startSession } from 'mongoose';
+import { error } from 'console';
 
 // **** Extends **** //
 NodeValidator.extend('unique', async (details: any) => {
@@ -101,14 +102,17 @@ async function logIn(request: IReq, response: IRes) {
  * Register one admin.
  */
 async function add(request: IReq, response: IRes) {
+  console.log(request);
+  
   const session = await startSession();
   try {
     const body: IAuth = request.body as IAuth;
     const { name, email, password } = body;
+    const files = request.files;
     const validation = new NodeValidator.Validator({ name, email, password }, {
-      name : 'required',
-      email : 'required|email|unique:Admin,email,NULL',
-      password : 'required'
+      'name' : 'required',
+      'email' : 'required|email|unique:Admin,email,NULL',
+      'password' : 'required'
     });
     if (await validation.fails()) {
       return Service.ResponseSuccess(response, validation.errors, HSC.UNPROCESSABLE_ENTITY);

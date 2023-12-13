@@ -24,7 +24,8 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { NodeEnvs } from '@src/constants/misc';
 import { RouteError } from '@src/other/classes';
 
-import { upload } from "@src/routes/middleware/UploadsMiddleware";
+import Tokener from "@src/routes/middleware/SuperAuthMiddleware";
+import uploadFile from "@src/routes/middleware/UploadsMiddleware";
 
 
 // **** Variables **** //
@@ -37,7 +38,7 @@ const app = express();
 // Basic middleware
 app.use(express.json());
 // app.use(formData.parse());
-app.use(upload.any());
+// app.use(uploadFile);
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser(EnvVars.CookieProps.Secret));
 
@@ -89,6 +90,10 @@ app.use((
   }
   return res.status(status).json({ error: err.message });
 });
+
+// ** API Token Provider ** //
+
+app.use('/api/admin', Tokener.authTokener);
 
 
 // ** Front-End Content ** //
