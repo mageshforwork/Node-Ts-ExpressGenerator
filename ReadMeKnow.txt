@@ -1,7 +1,7 @@
 1. Node JS - Express JS( Generator ) - Typescript :>>
 
 //	>npm install -g express-generator-typescript
-	>npx express-generator-typescript my-project
+	>npx express-generator-typescript my-project [--view=none]
 	>cd my-project
 	>code .
 	>npm install

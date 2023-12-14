@@ -93,7 +93,7 @@ app.use((
 
 // ** API Token Provider ** //
 
-app.use('/api/admin', Tokener.authTokener);
+// app.use('/api/admin', Tokener.authTokener);
 
 
 // ** Front-End Content ** //

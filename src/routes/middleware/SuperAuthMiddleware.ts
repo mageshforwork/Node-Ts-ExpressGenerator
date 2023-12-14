@@ -12,7 +12,7 @@ import { devNull } from 'node:os';
 
 async function authTokener(request: IReq, response: IRes, next: NextFunction) {
     try {
-        if (request.method === 'OPTIONS') {
+        if (request.method === 'OPTIONS' || request.url === '/login') {
             return next()
         }
         if (!request.header('Authorization')) {

@@ -102,8 +102,6 @@ async function logIn(request: IReq, response: IRes) {
  * Register one admin.
  */
 async function add(request: IReq, response: IRes) {
-  console.log(request);
-  
   const session = await startSession();
   try {
     const body: IAuth = request.body as IAuth;
