@@ -3,6 +3,10 @@ import HSC from '@src/constants/HttpStatusCodes';
 import Service from '@src/services/Service';
 import { FileFilterCallback as Callback } from "multer";
 import { Express, Request, Response, NextFunction } from "express";
+import fs from "fs";
+
+type UploadedFile = Express.Multer.File[];
+// interface UploadedFile extends Express.Multer.File {}
 
 let File: Express.Multer.File;
 const MIMES = ['image/png', 'image/jpg', 'image/jpeg'];
@@ -46,5 +50,10 @@ const uploadFile = (request: Request, response: Response, next: NextFunction) =>
   });
 };
 
-export default uploadFile;
+const destroyFile = (files: UploadedFile) => {
+  if (files?.length != 0) for (let i = 0; i < files?.length; i++) fs.unlinkSync(files[i].path);
+  return null;
+}
+
 export const upload_none = multer();
+export default { uploadFile, destroyFile };

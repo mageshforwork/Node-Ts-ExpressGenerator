@@ -7,7 +7,7 @@ import UserRoutes from './UserRoutes';
 import SuperAuthRoutes from './handler/SuperAuthHandler';
 import Tokener from './middleware/SuperAuthMiddleware';
 // import { upload } from "./middleware/UploadsMiddleware";
-import uploadFile, { upload_none } from "@src/routes/middleware/UploadsMiddleware";
+import upload, { upload_none } from "@src/routes/middleware/UploadsMiddleware";
 
 // **** Variables **** //
 
@@ -28,7 +28,7 @@ const SuperRouter = Router();
 SuperRouter.get(Paths.Auth.Get, SuperAuthRoutes.getAll); // Get all admins
 SuperRouter.get(Paths.Auth.GetOne, SuperAuthRoutes.getOne); // Get one admin
 SuperRouter.options(Paths.Auth.Login, upload_none.none(), SuperAuthRoutes.logIn); // One admin login
-SuperRouter.post(Paths.Auth.Register, uploadFile, SuperAuthRoutes.add); // Register one admin
+SuperRouter.post(Paths.Auth.Register, upload.uploadFile, SuperAuthRoutes.add); // Register one admin
 SuperRouter.post(Paths.Auth.Login, SuperAuthRoutes.logOut); // One admin logout
 SuperRouter.put(Paths.Auth.Update, SuperAuthRoutes.update); // Update one admin
 SuperRouter.delete(Paths.Auth.Delete, SuperAuthRoutes.delete); // Delete one admin

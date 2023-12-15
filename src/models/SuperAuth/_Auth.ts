@@ -5,6 +5,7 @@ export interface IAuth {
   email: string;
   pwdHash?: string;
   password?: string;
+  profile?: string;
 };
 
 interface AuthModel extends Document {
@@ -37,7 +38,10 @@ const AuthSchema = new Schema<AuthModel>({
     type: String, 
     default: 'admin'
   },
-  profile: { type: String },
+  profile: {
+    type: String,
+    default: null
+  },
   deleted_at: {
     type: Boolean,
     default: false

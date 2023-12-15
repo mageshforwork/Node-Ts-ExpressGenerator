@@ -11,6 +11,7 @@ import { sign } from 'jsonwebtoken';
 import NodeValidator from 'node-input-validator';
 import mongoose, { startSession } from 'mongoose';
 import { error } from 'console';
+import destroy from "@src/routes/middleware/UploadsMiddleware";
 
 // **** Extends **** //
 NodeValidator.extend('unique', async (details: any) => {
@@ -33,6 +34,9 @@ NodeValidator.extend('unique', async (details: any) => {
 });
 
 // **** Variables **** //
+
+type UploadedFile = Express.Multer.File[];
+// interface UploadedFile extends Express.Multer.File {}
 
 export const Auth_NOT_EXIST = 'Admin not found';
 
@@ -103,16 +107,17 @@ async function logIn(request: IReq, response: IRes) {
  */
 async function add(request: IReq, response: IRes) {
   const session = await startSession();
+  const files: UploadedFile = request.files as UploadedFile;
   try {
     const body: IAuth = request.body as IAuth;
     const { name, email, password } = body;
-    const files = request.files;
     const validation = new NodeValidator.Validator({ name, email, password }, {
       'name' : 'required',
       'email' : 'required|email|unique:Admin,email,NULL',
       'password' : 'required'
     });
     if (await validation.fails()) {
+      destroy.destroyFile(files);
       return Service.ResponseSuccess(response, validation.errors, HSC.UNPROCESSABLE_ENTITY);
     }
     session.startTransaction();
@@ -120,10 +125,11 @@ async function add(request: IReq, response: IRes) {
     const data: IAuth = { name, email,
       pwdHash: hash
     };
+    if (files.length != 0) data.profile = files[0].path;
     const [auth] = await Auth.create([data],{session});
     const [database] = await Database.create([{
       adminId: auth._id,
-      dbName: (typeof auth.email == 'string') ? auth.email!.split('@')[0] + '-' + 'admin' : null
+      dbName: (typeof auth.email === 'string') ? auth.email!.split('@')[0] + '-' + 'admin' : null
     }],{session});
     await session.commitTransaction();
     session.endSession();
@@ -131,6 +137,7 @@ async function add(request: IReq, response: IRes) {
   } catch (err) {
     await session.abortTransaction();
     session.endSession();
+    destroy.destroyFile(files);
     return Service.ResponseError(response, err, HSC.BAD_REQUEST);
   }
 }
