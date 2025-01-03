@@ -6,6 +6,7 @@ export interface IAuth {
   pwdHash?: string;
   password?: string;
   profile?: string;
+  age?: string;
 };
 
 interface AuthModel extends Document {
@@ -15,6 +16,7 @@ interface AuthModel extends Document {
   role: string;
   profile: string;
   deleted_at: boolean;
+  deleteSoft(): Promise<void>;
 };
 
 const AuthSchema = new Schema<AuthModel>({
@@ -25,10 +27,7 @@ const AuthSchema = new Schema<AuthModel>({
   email: { 
     type: String, 
     required: true, 
-    unique: {
-      value: true,
-      message: 'Email already exists.'
-    },
+    unique: true
   },
   pwdHash: { 
     type: String, 
@@ -59,6 +58,11 @@ AuthSchema.pre('findOne', function () {
 AuthSchema.pre(/exists/, function (this: any) {
   this.where({deleted_at: false});
 });
+
+AuthSchema.methods.deleteSoft = async function (): Promise<void> {
+  this.deleted_at = true;
+  await this.save();
+};
 
 const Auth = model<AuthModel>('Admin', AuthSchema);
 

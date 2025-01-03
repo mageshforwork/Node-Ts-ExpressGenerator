@@ -110,11 +110,14 @@ async function add(request: IReq, response: IRes) {
   const files: UploadedFile = request.files as UploadedFile;
   try {
     const body: IAuth = request.body as IAuth;
-    const { name, email, password } = body;
-    const validation = new NodeValidator.Validator({ name, email, password }, {
+    const { name, email, password, age } = body;
+    const validation = new NodeValidator.Validator({ name, email, password, age }, {
       'name' : 'required',
       'email' : 'required|email|unique:Admin,email,NULL',
-      'password' : 'required'
+      'password' : 'required',
+      'age' : 'required'
+    }, {
+      'email.required' : 'The email field is required.',
     });
     if (await validation.fails()) {
       destroy.destroyFile(files);
@@ -190,7 +193,7 @@ async function delete_(request: IReq, response: IRes) {
     if (!exist) {
       return Service.ResponseError(response, Auth_NOT_EXIST, HSC.NOT_FOUND);
     }
-    await Auth.updateOne({_id: id}, {$set: {deleted_at: true}});
+    // await exist.deleteSoft();
     return Service.ResponseSuccess(response, [], HSC.OK);
   } catch (err) {
     return Service.ResponseError(response, err, HSC.BAD_REQUEST);
